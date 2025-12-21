@@ -1,52 +1,56 @@
-fetch("questions.json") 
+fetch("exercise.json") 
 .then(response => response.json()) 
 .then(data => renderQuestions(data)) 
 .catch(err => { console.error("Failed to load questions:", err); 
 document.getElementById("quiz-container").textContent = "Failed to load questions."; });
 
 
-function renderQuestions(questions) {
+function renderQuestions(data) {
   const container = document.getElementById("quiz-container");
   container.innerHTML = "";
 
-  questions.forEach(q => {
-    const div = document.createElement("div");
-    div.className = "question";
+  const q = data[0]; 
+  const text = q.question;
+  const answers = q.answers; // array like [ [1,"is"], [2,"ur"], [3,"ue"] ]
 
-    // Split at the blank
-    const parts = q.question.split("____");
+  // Split the question into parts around the blanks
+  const parts = text.split("__");
 
-    // Create input
-    const input = document.createElement("input");
-    input.type = "text";
-    input.dataset.answer = q.answer.toLowerCase();
+  // Number of blanks
+  const blankCount = parts.length - 1;
 
-    input.addEventListener("input", function () {
-      const userAnswer = input.value.trim().toLowerCase();
-      const correctAnswer = input.dataset.answer;
+  const div = document.createElement("div");
+  div.className = "question";
 
-      if (userAnswer === "") {
-        input.classList.remove("correct", "incorrect");
-        return;
-      }
+  for (let i = 0; i < parts.length; i++) {
+    div.appendChild(document.createTextNode(parts[i]));
 
-      if (userAnswer === correctAnswer) {
-        input.classList.add("correct");
-        input.classList.remove("incorrect");
-      } else {
-        input.classList.add("incorrect");
-        input.classList.remove("correct");
-      }
-    });
+    if (i < blankCount) {
+      const input = document.createElement("input");
+      input.type = "text";
 
-    // Build sentence with input inserted
-    div.appendChild(document.createTextNode(parts[0]));
-    div.appendChild(input);
+      // answers[i] = [index, "letters"]
+      const correct = answers[i][1].toLowerCase();
+      input.dataset.answer = correct;
 
-    if (parts[1]) {
-      div.appendChild(document.createTextNode(parts[1]));
+      input.addEventListener("input", function () {
+        const user = input.value.trim().toLowerCase();
+
+        if (user === "") {
+          input.classList.remove("correct", "incorrect");
+        } else if (user === correct) {
+          input.classList.add("correct");
+          input.classList.remove("incorrect");
+        } else {
+          input.classList.add("incorrect");
+          input.classList.remove("correct");
+        }
+      });
+
+      div.appendChild(input);
     }
+  }
 
-    container.appendChild(div);
-  });
+  container.appendChild(div);
 }
+

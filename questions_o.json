@@ -1,0 +1,10 @@
+[
+  {
+    "question": "The capital of France is par__. 2 + 2 = fo__. The color of the sky is bl__.",
+    "answers": [
+      [1, "is"],
+      [2, "ur"],
+      [3, "ue"]
+    ]
+  }
+]
