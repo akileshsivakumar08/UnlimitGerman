@@ -8,49 +8,60 @@ document.getElementById("quiz-container").textContent = "Failed to load question
 function renderQuestions(data) {
   const container = document.getElementById("quiz-container");
   container.innerHTML = "";
+  const ip_Width=1;
+  const q = data[0];
+  const words = q.question.split(" ");
 
-  const q = data[0]; 
-  const text = q.question;
-  const answers = q.answers; // array like [ [1,"is"], [2,"ur"], [3,"ue"] ]
-
-  // Split the question into parts around the blanks
-  const parts = text.split("__");
-
-  // Number of blanks
-  const blankCount = parts.length - 1;
+  let articleIndex = 0;
+  let adjectiveIndex = 0;
 
   const div = document.createElement("div");
   div.className = "question";
 
-  for (let i = 0; i < parts.length; i++) {
-    div.appendChild(document.createTextNode(parts[i]));
+  words.forEach(word => {
+    if (word.includes("_ART")) {
+      // prefix before _ART
+      const prefix = word.split("_ART")[0];
+      div.appendChild(document.createTextNode(prefix));
 
-    if (i < blankCount) {
       const input = document.createElement("input");
       input.type = "text";
-
-      // answers[i] = [index, "letters"]
-      const correct = answers[i][1].toLowerCase();
+      input.size = ip_Width; // ensures 5-character width
+      const correct = q.articles[articleIndex][1].toLowerCase();
       input.dataset.answer = correct;
 
-      input.addEventListener("input", function () {
+      input.addEventListener("input", () => {
         const user = input.value.trim().toLowerCase();
-
-        if (user === "") {
-          input.classList.remove("correct", "incorrect");
-        } else if (user === correct) {
-          input.classList.add("correct");
-          input.classList.remove("incorrect");
-        } else {
-          input.classList.add("incorrect");
-          input.classList.remove("correct");
-        }
+        input.classList.toggle("correct", user === correct);
+        input.classList.toggle("incorrect", user !== "" && user !== correct);
       });
 
       div.appendChild(input);
+      div.appendChild(document.createTextNode(" ")); // keep spacing
+      articleIndex++;
+    } else if (word.includes("_ADJA")) {
+      const prefix = word.split("_ADJA")[0];
+      div.appendChild(document.createTextNode(prefix));
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.size = ip_Width; // ensures 5-character width
+      const correct = q.adjectives[adjectiveIndex][1].toLowerCase();
+      input.dataset.answer = correct;
+
+      input.addEventListener("input", () => {
+        const user = input.value.trim().toLowerCase();
+        input.classList.toggle("correct", user === correct);
+        input.classList.toggle("incorrect", user !== "" && user !== correct);
+      });
+
+      div.appendChild(input);
+      div.appendChild(document.createTextNode(" "));
+      adjectiveIndex++;
+    } else {
+      div.appendChild(document.createTextNode(word + " "));
     }
-  }
+  });
 
   container.appendChild(div);
 }
-
