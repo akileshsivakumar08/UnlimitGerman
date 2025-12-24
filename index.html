@@ -1,61 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Fill in the Blanks Quiz</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 0 10%;              /* padding left/right for breathing room */
-      background-color: #12121d;   /* dark bluish grey */
-      color: #f5f5f5;              /* soft white text */
-    }
-
-    h1 {
-      text-align: center;
-      color: #ffffff;              /* cyan accent */
-      margin: 30px 0;
-    }
-
-    .question {
-      margin-bottom: 25px;
-      font-size: 18px;
-    }
-
-    input {
-      font-family: monospace;
-      font-size: 16px;
-      width: 5ch;                  /* ~5 characters wide */
-      padding: 4px 6px;
-      border: none;
-      border-radius: 6px;
-      background-color: #2c2c3c;   /* sleek dark input */
-      color: #e0e0e0;              /* light text inside */
-      outline: none;
-      transition: all 0.3s ease;
-    }
-
-    input:focus {
-      background-color: #3a3a4a;
-      box-shadow: 0 0 6px #00bcd4;
-    }
-
-    .correct {
-      background-color: #2e7d32;   /* green for correct */
-      color: #fff;
-    }
-
-    .incorrect {
-      background-color: #c62828;   /* red for incorrect */
-      color: #fff;
-    }
-  </style>
+  <title>Quiz Practice</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <h1>Fill in the Blanks Quiz</h1>
-  <div id="quiz-container">Loading questions...</div>
+  <div id="quiz-container"></div>
+  <div class="buttons">
+    <button id="start-btn">Start practice</button>
+    <button id="back-btn" style="display:none;">Back to original text</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
