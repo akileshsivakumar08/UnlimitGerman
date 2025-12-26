@@ -6,11 +6,26 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <a id="home-btn" href="index.html">
+    <span class="home-icon">🏠</span>
+</a>
+
   <div id="title"></div>
+  <div id="top-controls">
+    <select id="mode">
+        <option value="original">View Original</option>
+        <option value="all">Practice All</option>
+        <option value="cases">Cases</option>
+        <option value="adjectives">Adjective declinations</option>
+    </select>
+    <button id="filter-btn">Set Filter</button>
+</div>
+
   <div id="quiz-container"></div>
+  
   <div class="buttons">
-    <button id="start-btn">Start practice</button>
     <button id="back-btn" style="display:none;">Back to original text</button>
+    <button id="next-btn" style="display:none;">Next Exercise</button>
   </div>
 
   <script src="exercise.js"></script>

@@ -1,72 +1,111 @@
-// Get file from query string
+// -----------------------------
+// GET CURRENT FILE FROM URL
+// -----------------------------
 const params = new URLSearchParams(window.location.search);
-const file = params.get("file");
+const currentFile = params.get("file");
 
-// Utility: fade swap for smooth transitions
-function fadeSwap(callback) {
-  const container = document.getElementById("quiz-container");
-  container.classList.remove("show"); // fade out
+// Global list of exercises (from index.json)
+let exerciseList = [];
 
-  setTimeout(() => {
-    callback();                        // swap content
-    container.classList.add("show");   // fade in
-  }, 100);
-}
 
-// Load the exercise JSON
-fetch(file)
+// -----------------------------
+// LOAD INDEX.JSON FIRST
+// -----------------------------
+fetch("Exercises/index.json")
+  .then(res => res.json())
+  .then(list => {
+    exerciseList = list;
+
+    return fetch(currentFile);
+  })
   .then(res => res.json())
   .then(data => {
-    const title = data[0].title; // use title from JSON
+    const title = data[0].title;
+
     document.getElementById("title").innerHTML = `<h2><b>${title}</b></h2>`;
 
-    // Show full text initially
+    // Default view: original text
     showOriginalText(data[0]);
 
-    // Button handlers
-    document.getElementById("start-btn").addEventListener("click", () => {
-      renderQuestions(data);
-      document.getElementById("start-btn").style.display = "none";
-      document.getElementById("back-btn").style.display = "inline";
+    // Set filter button
+    document.getElementById("filter-btn").addEventListener("click", () => {
+      applyMode(data);
     });
 
+    // Back button
     document.getElementById("back-btn").addEventListener("click", () => {
       showOriginalText(data[0]);
-      document.getElementById("back-btn").style.display = "none";
-      document.getElementById("start-btn").style.display = "inline";
     });
+
+    setupNextButton();
   })
   .catch(err => {
     console.error("Failed to load exercise:", err);
     document.getElementById("quiz-container").textContent = "Failed to load exercise.";
   });
 
-// Show the original text with endings filled in
+
+// -----------------------------
+// FADE TRANSITION
+// -----------------------------
+function fadeSwap(callback) {
+  const container = document.getElementById("quiz-container");
+  container.classList.remove("show");
+
+  setTimeout(() => {
+    callback();
+    container.classList.add("show");
+  }, 100);
+}
+
+
+// -----------------------------
+// GET CURRENT MODE
+// -----------------------------
+function getMode() {
+  return document.getElementById("mode").value;
+}
+
+
+// -----------------------------
+// APPLY MODE
+// -----------------------------
+function applyMode(data) {
+  const mode = getMode();
+
+  if (mode === "original") {
+    showOriginalText(data[0]);
+  } else {
+    renderQuestions(data, mode);
+  }
+}
+
+
+// -----------------------------
+// SHOW ORIGINAL TEXT
+// -----------------------------
 function showOriginalText(q) {
   fadeSwap(() => {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
 
     const words = q.question.split(" ");
-    let articleIndex = 0;
-    let adjectiveIndex = 0;
+    let ai = 0;
+    let aj = 0;
 
     const div = document.createElement("div");
-    div.className = "original-text";
 
     words.forEach(word => {
       if (word.includes("_ART")) {
         const prefix = word.split("_ART")[0];
-        const correct = q.articles[articleIndex][1];
-        div.appendChild(document.createTextNode(prefix + correct + " "));
-        articleIndex++;
+        div.append(prefix + q.articles[ai][1] + " ");
+        ai++;
       } else if (word.includes("_ADJA")) {
         const prefix = word.split("_ADJA")[0];
-        const correct = q.adjectives[adjectiveIndex][1];
-        div.appendChild(document.createTextNode(prefix + correct + " "));
-        adjectiveIndex++;
+        div.append(prefix + q.adjectives[aj][1] + " ");
+        aj++;
       } else {
-        div.appendChild(document.createTextNode(word + " "));
+        div.append(word + " ");
       }
     });
 
@@ -74,64 +113,129 @@ function showOriginalText(q) {
   });
 }
 
-// Render practice mode with input boxes
-function renderQuestions(data) {
+
+// -----------------------------
+// PRACTICE MODE (MODE-AWARE)
+// -----------------------------
+function renderQuestions(data, mode) {
   fadeSwap(() => {
     const container = document.getElementById("quiz-container");
     container.innerHTML = "";
+
     const q = data[0];
     const words = q.question.split(" ");
 
-    let articleIndex = 0;
-    let adjectiveIndex = 0;
+    let ai = 0;
+    let aj = 0;
 
     const div = document.createElement("div");
-    div.className = "question";
 
     words.forEach(word => {
-      if (word.includes("_ART")) {
-        const prefix = word.split("_ART")[0];
-        div.appendChild(document.createTextNode(prefix));
 
-        const correct = q.articles[articleIndex][1].toLowerCase();
-        const input = document.createElement("input");
-        input.type = "text";
-        input.size = correct.length;
-        input.dataset.answer = correct;
+      // PRACTICE ALL → both inputs
+      if (mode === "all") {
+        if (word.includes("_ART")) {
+          const prefix = word.split("_ART")[0];
+          div.append(prefix);
+          const correct = q.articles[ai][1].toLowerCase();
+          const input = createInput(correct);
+          div.append(input, " ");
+          ai++;
+          return;
+        }
 
-        input.addEventListener("input", () => {
-          const user = input.value.trim().toLowerCase();
-          input.classList.toggle("correct", user === correct);
-          input.classList.toggle("incorrect", user !== "" && user !== correct);
-        });
-
-        div.appendChild(input);
-        div.appendChild(document.createTextNode(" "));
-        articleIndex++;
-      } else if (word.includes("_ADJA")) {
-        const prefix = word.split("_ADJA")[0];
-        div.appendChild(document.createTextNode(prefix));
-
-        const correct = q.adjectives[adjectiveIndex][1].toLowerCase();
-        const input = document.createElement("input");
-        input.type = "text";
-        input.size = correct.length;
-        input.dataset.answer = correct;
-
-        input.addEventListener("input", () => {
-          const user = input.value.trim().toLowerCase();
-          input.classList.toggle("correct", user === correct);
-          input.classList.toggle("incorrect", user !== "" && user !== correct);
-        });
-
-        div.appendChild(input);
-        div.appendChild(document.createTextNode(" "));
-        adjectiveIndex++;
-      } else {
-        div.appendChild(document.createTextNode(word + " "));
+        if (word.includes("_ADJA")) {
+          const prefix = word.split("_ADJA")[0];
+          div.append(prefix);
+          const correct = q.adjectives[aj][1].toLowerCase();
+          const input = createInput(correct);
+          div.append(input, " ");
+          aj++;
+          return;
+        }
       }
+
+      // CASES MODE → only article inputs
+      if (mode === "cases") {
+        if (word.includes("_ART")) {
+          const prefix = word.split("_ART")[0];
+          div.append(prefix);
+          const correct = q.articles[ai][1].toLowerCase();
+          const input = createInput(correct);
+          div.append(input, " ");
+          ai++;
+          return;
+        }
+
+        if (word.includes("_ADJA")) {
+          const prefix = word.split("_ADJA")[0];
+          div.append(prefix + q.adjectives[aj][1] + " ");
+          aj++;
+          return;
+        }
+      }
+
+      // ADJECTIVES MODE → only adjective inputs
+      if (mode === "adjectives") {
+        if (word.includes("_ADJA")) {
+          const prefix = word.split("_ADJA")[0];
+          div.append(prefix);
+          const correct = q.adjectives[aj][1].toLowerCase();
+          const input = createInput(correct);
+          div.append(input, " ");
+          aj++;
+          return;
+        }
+
+        if (word.includes("_ART")) {
+          const prefix = word.split("_ART")[0];
+          div.append(prefix + q.articles[ai][1] + " ");
+          ai++;
+          return;
+        }
+      }
+
+      div.append(word + " ");
     });
 
     container.appendChild(div);
+  });
+}
+
+
+// -----------------------------
+// INPUT FIELD CREATOR
+// -----------------------------
+function createInput(correct) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.size = correct.length;
+  input.dataset.answer = correct;
+
+  input.addEventListener("input", () => {
+    const user = input.value.trim().toLowerCase();
+    input.classList.toggle("correct", user === correct);
+    input.classList.toggle("incorrect", user !== "" && user !== correct);
+  });
+
+  return input;
+}
+
+
+// -----------------------------
+// NEXT EXERCISE BUTTON
+// -----------------------------
+function setupNextButton() {
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.style.display = "inline";
+
+  const index = exerciseList.findIndex(e => `Exercises/${e.file}` === currentFile);
+  if (index === -1) return;
+
+  const nextIndex = (index + 1) % exerciseList.length;
+
+  nextBtn.addEventListener("click", () => {
+    const nextFile = exerciseList[nextIndex].file;
+    window.location.href = `exercise.html?file=Exercises/${nextFile}`;
   });
 }

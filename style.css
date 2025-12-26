@@ -131,3 +131,65 @@ button:hover {
   color: #e6e6e6;
 }
 
+/* Home button (top-left corner) */
+#home-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 9999;
+  text-decoration: none;
+  background-color: #252b36;
+  border: 1px solid #3c3c3c;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #e6e6e6;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#home-btn:hover {
+  background-color: #0078d7;
+  box-shadow: 0 0 10px rgba(0,120,215,0.7);
+}
+
+.home-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.mode-select {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.mode-select select {
+  background-color: #252b36;
+  color: #e6e6e6;
+  border: 1px solid #3c3c3c;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+}
+#top-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+#top-controls select,
+#top-controls button {
+  background-color: #252b36;
+  color: #e6e6e6;
+  border: 1px solid #3c3c3c;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+#top-controls button:hover {
+  background-color: #0078d7;
+  cursor: pointer;
+}
