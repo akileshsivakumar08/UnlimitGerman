@@ -1,29 +1,8 @@
-// Load the exercise data
-fetch("exercise.json")
-  .then(response => response.json())
-  .then(data => {
-    // Show the filled text on page load
-    showOriginalText(data[0]);
+// Get file from query string
+const params = new URLSearchParams(window.location.search);
+const file = params.get("file");
 
-    // Start practice button
-    document.getElementById("start-btn").addEventListener("click", () => {
-      renderQuestions(data);   // switch to practice mode
-      document.getElementById("start-btn").style.display = "none";
-      document.getElementById("back-btn").style.display = "inline";
-    });
-
-    // Back to original text button
-    document.getElementById("back-btn").addEventListener("click", () => {
-      showOriginalText(data[0]); // back to filled text
-      document.getElementById("back-btn").style.display = "none";
-      document.getElementById("start-btn").style.display = "inline";
-    });
-  })
-  .catch(err => {
-    console.error("Failed to load questions:", err);
-    document.getElementById("quiz-container").textContent = "Failed to load questions.";
-  });
-
+// Utility: fade swap for smooth transitions
 function fadeSwap(callback) {
   const container = document.getElementById("quiz-container");
   container.classList.remove("show"); // fade out
@@ -31,9 +10,38 @@ function fadeSwap(callback) {
   setTimeout(() => {
     callback();                        // swap content
     container.classList.add("show");   // fade in
-  }, 100); // small delay so CSS transition triggers
+  }, 100);
 }
 
+// Load the exercise JSON
+fetch(file)
+  .then(res => res.json())
+  .then(data => {
+    const title = data[0].title; // use title from JSON
+    document.getElementById("title").innerHTML = `<h2><b>${title}</b></h2>`;
+
+    // Show full text initially
+    showOriginalText(data[0]);
+
+    // Button handlers
+    document.getElementById("start-btn").addEventListener("click", () => {
+      renderQuestions(data);
+      document.getElementById("start-btn").style.display = "none";
+      document.getElementById("back-btn").style.display = "inline";
+    });
+
+    document.getElementById("back-btn").addEventListener("click", () => {
+      showOriginalText(data[0]);
+      document.getElementById("back-btn").style.display = "none";
+      document.getElementById("start-btn").style.display = "inline";
+    });
+  })
+  .catch(err => {
+    console.error("Failed to load exercise:", err);
+    document.getElementById("quiz-container").textContent = "Failed to load exercise.";
+  });
+
+// Show the original text with endings filled in
 function showOriginalText(q) {
   fadeSwap(() => {
     const container = document.getElementById("quiz-container");
@@ -66,6 +74,7 @@ function showOriginalText(q) {
   });
 }
 
+// Render practice mode with input boxes
 function renderQuestions(data) {
   fadeSwap(() => {
     const container = document.getElementById("quiz-container");
