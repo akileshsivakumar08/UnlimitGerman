@@ -16,7 +16,7 @@ logging.basicConfig(
 # ---------------------------------------------
 # CONFIG
 # ---------------------------------------------
-EXERCISE_FOLDER = r"D:/Projects/Questionnaire/Exercises"
+EXERCISE_FOLDER = r"D:/Projects/UnlimitGerman/Exercises"
 
 # Load German model
 nlp = spacy.load("de_core_news_sm")
