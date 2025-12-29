@@ -1,29 +1,35 @@
-# exercise_generator.py
-
+import logging
 import spacy
 from typing import List, Tuple
 import json
 from datetime import datetime, timezone
 import os
 
-# Load the German language model
+# ---------------------------------------------
+# LOGGING
+# ---------------------------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
+# ---------------------------------------------
+# CONFIG
+# ---------------------------------------------
+EXERCISE_FOLDER = r"D:/Projects/Questionnaire/Exercises"
+
+# Load German model
 nlp = spacy.load("de_core_news_sm")
 
-# Endings for adjectives and articles
+# Endings
 adj_Endings = ["er", "en", "em", "es", "e"]
 art_Endings = ["inem", "in", "inen", "iner", "ine", "ines", "as", "er", "en", "em", "es", "ie"]
 
-EXERCISE_FOLDER = "D:/Projects/Questionnaire/Exercises"
 
-
+# ---------------------------------------------
+# MAIN CLASS
+# ---------------------------------------------
 class GermanTextAnalysis:
-    date: str
-    title: str
-    text: str
-    displaytext: str
-    adjectives: List[Tuple[int, str]]
-    articles: List[Tuple[int, str]]
-
     def __init__(self, text: str):
         self.date = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -31,7 +37,12 @@ class GermanTextAnalysis:
         self.title = lines[0] if lines else "Untitled"
         self.text = "\n".join(lines[1:]) if len(lines) > 1 else ""
 
+        logging.info(f"Parsed title: {self.title}")
+        logging.info(f"Text length: {len(self.text)} characters")
+
     def save_to_json(self, filename):
+        logging.info(f"Saving exercise JSON → {filename}")
+
         data = {
             "date": self.date,
             "title": self.title,
@@ -39,10 +50,15 @@ class GermanTextAnalysis:
             "adjectives": self.adjectives,
             "articles": self.articles
         }
+
         with open(filename, "w", encoding="utf-8") as f:
             json.dump([data], f, ensure_ascii=False, indent=4)
 
+        logging.info("JSON saved successfully")
+
     def mark_adjective_endings(self):
+        logging.info("Running adjective/article detection…")
+
         doc = nlp(self.text)
         result_ADJ = []
         result_ART = []
@@ -50,7 +66,9 @@ class GermanTextAnalysis:
         blank_id = 0
 
         for token in doc:
-            # Adjective endings
+            # -----------------------------
+            # ADJECTIVES
+            # -----------------------------
             if token.tag_ == "ADJA":
                 adj_text = token.text
                 matched = False
@@ -67,7 +85,9 @@ class GermanTextAnalysis:
                 if not matched:
                     output_tokens.append(adj_text)
 
-            # Article endings
+            # -----------------------------
+            # ARTICLES
+            # -----------------------------
             elif token.tag_ == "ART":
                 art_text = token.text
                 matched = False
@@ -87,13 +107,18 @@ class GermanTextAnalysis:
             else:
                 output_tokens.append(token.text)
 
+        logging.info(f"Detected {len(result_ADJ)} adjectives")
+        logging.info(f"Detected {len(result_ART)} articles")
+
         return result_ADJ, result_ART, " ".join(output_tokens)
 
 
 # ---------------------------------------------
-# Generate index.json
+# INDEX.JSON GENERATION
 # ---------------------------------------------
 def generate_index_json(folder_path):
+    logging.info("Generating index.json…")
+
     index_entries = []
 
     for filename in os.listdir(folder_path):
@@ -111,7 +136,7 @@ def generate_index_json(folder_path):
                 })
 
             except Exception as e:
-                print(f"Error reading {filename}: {e}")
+                logging.error(f"Error reading {filename}: {e}")
 
     # Sort newest → oldest
     index_entries.sort(
@@ -119,18 +144,19 @@ def generate_index_json(folder_path):
         reverse=True
     )
 
-    # Write index.json
     index_path = os.path.join(folder_path, "index.json")
     with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index_entries, f, ensure_ascii=False, indent=4)
 
-    print("index.json successfully generated!")
+    logging.info(f"index.json updated ({len(index_entries)} entries)")
 
 
 # ---------------------------------------------
-# Generate next exercise filename
+# NEXT FILENAME
 # ---------------------------------------------
 def get_next_exercise_filename(folder_path):
+    logging.info("Determining next exercise filename…")
+
     existing_numbers = []
 
     for filename in os.listdir(folder_path):
@@ -140,13 +166,17 @@ def get_next_exercise_filename(folder_path):
                 existing_numbers.append(int(num_part))
 
     next_number = max(existing_numbers, default=0) + 1
+    logging.info(f"Next exercise number: {next_number}")
+
     return os.path.join(folder_path, f"exercise{next_number}.json")
 
 
 # ---------------------------------------------
-# Create exercise from text (used by Flask)
+# MAIN ENTRY POINT
 # ---------------------------------------------
 def create_exercise_from_text(text):
+    logging.info("Creating exercise from text…")
+
     obj = GermanTextAnalysis(text)
     obj.adjectives, obj.articles, obj.displaytext = obj.mark_adjective_endings()
 
@@ -155,4 +185,5 @@ def create_exercise_from_text(text):
 
     generate_index_json(EXERCISE_FOLDER)
 
+    logging.info(f"Exercise creation complete → {filename}")
     return filename
