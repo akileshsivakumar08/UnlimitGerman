@@ -1,10 +1,17 @@
 [
     {
+        "file": "exercise2.json",
+        "date": "2025-12-29 07:15:37",
+        "title": "Freundschaft in Zeiten der Digitalisierung"
+    },
+    {
         "file": "exercise1.json",
-        "date": "2025-12-25 19:42:37"
+        "date": "2025-12-25 19:42:37",
+        "title": "Gesundheitsrisiko Spielzeug"
     },
     {
         "file": "exercise.json",
-        "date": "2025-12-25 19:41:09"
+        "date": "2025-12-25 19:41:09",
+        "title": "Gesundheitsrisiko Spielzeug"
     }
 ]
