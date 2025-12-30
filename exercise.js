@@ -211,6 +211,11 @@ function createInput(correct) {
   input.type = "text";
   input.size = correct.length;
   input.dataset.answer = correct;
+  // 🔥 Mobile keyboard fixes
+  input.setAttribute("autocapitalize", "none");
+  input.setAttribute("autocorrect", "off"); 
+  input.setAttribute("autocomplete", "off"); 
+  input.setAttribute("spellcheck", "false");
 
   input.addEventListener("input", () => {
     const user = input.value.trim().toLowerCase();
