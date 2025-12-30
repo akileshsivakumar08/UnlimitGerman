@@ -20,33 +20,95 @@ h2 {
   color: #e6e6e6;
 }
 
-/* Card layout for home page */
+/* Home page card layout */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, auto));
+  gap: 16px;
   padding: 20px;
-  max-width: 900px;
+  max-width: 700px;
   margin: 0 auto;
-  justify-items: center; /* centers cards inside grid */
+  justify-content: center;
 }
 
 .card {
   background-color: #252b36;
   border: 1px solid #3c3c3c;
   border-radius: 8px;
-  padding: 20px 28px; /* equal left/right padding */
-  max-width: 260px;
-  width: 100%;
-  margin: 0 auto;
+  padding: 20px 24px;
+  width: auto;
+  max-width: 200px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 12px rgba(0, 120, 215, 0.6);
+}
+
+/* FIXED HOME BUTTON */
+#home-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 3000;
+  text-decoration: none;
+  background-color: #252b36;
+  border: 1px solid #3c3c3c;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #e6e6e6;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#home-btn:hover {
+  background-color: #0078d7;
+  box-shadow: 0 0 10px rgba(0,120,215,0.7);
+}
+
+/* FIXED HEADER BAR */
+#top-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 12px 12px 60px; /* space for home button */
+  background-color: #1e2a38;
+  border-bottom: 1px solid #3c3c3c;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2000;
+  box-sizing: border-box;
+}
+
+#top-controls select,
+#top-controls button {
+  background-color: #252b36;
+  color: #e6e6e6;
+  border: 1px solid #3c3c3c;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+#top-controls button:hover {
+  background-color: #0078d7;
+  cursor: pointer;
+}
+
+/* Title appears below fixed header */
+#title {
+  margin-top: 110px;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #e6e6e6;
 }
 
 /* Quiz container */
@@ -71,11 +133,14 @@ h2 {
   transform: translateY(0);
 }
 
-/* Input fields */
+/* Auto-size input fields */
 input {
-  font-size: 16px;
+  width: auto;
+  display: inline-block;
+  min-width: 40px;
   padding: 4px 6px;
-  margin: 0 2px;
+  font-size: 16px;
+  box-sizing: content-box;
   border: 1px solid #555;
   border-radius: 4px;
   background-color: #1e2a38;
@@ -126,128 +191,101 @@ button:hover {
   font-size: 16px;
 }
 
-/* Title styling */
-#title {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#title h2 {
-  font-weight: bold;
-  color: #e6e6e6;
-}
-
-/* Home button */
-#home-btn {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 9999;
-  text-decoration: none;
-  background-color: #252b36;
-  border: 1px solid #3c3c3c;
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: #e6e6e6;
-  font-size: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#home-btn:hover {
-  background-color: #0078d7;
-  box-shadow: 0 0 10px rgba(0,120,215,0.7);
-}
-
-.home-icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-/* Mode select */
-.mode-select {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.mode-select select {
-  background-color: #252b36;
-  color: #e6e6e6;
-  border: 1px solid #3c3c3c;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-/* Top controls */
-#top-controls {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 1000;
-}
-
-#top-controls select,
-#top-controls button {
-  background-color: #252b36;
-  color: #e6e6e6;
-  border: 1px solid #3c3c3c;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-#top-controls button:hover {
-  background-color: #0078d7;
-  cursor: pointer;
-}
-
-/* Fix horizontal overflow issues */
+/* Prevent horizontal overflow */
 html, body {
   overflow-x: hidden;
 }
 
-/* MOBILE — merged into one clean block */
+/* MOBILE — optimized question layout */
 @media (max-width: 600px) {
 
   body {
     padding: 10px;
   }
 
+  /* Home button */
   #home-btn {
     top: 10px;
     left: 10px;
-    font-size: 16px;
+    font-size: 18px;
     padding: 6px 10px;
   }
 
+  /* Fixed header bar (mobile stacked layout) */
   #top-controls {
-    top: 60px;
-    left: 10px;
-    right: 10px;
-    width: calc(100% - 20px);
     flex-direction: column;
-    gap: 6px;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 10px 10px 60px;
   }
 
   #top-controls select,
   #top-controls button {
     width: 100%;
-    max-width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* Title spacing on mobile */
+  #title {
+    margin-top: 140px;
+    font-size: 20px;
+  }
+
+  /* Quiz container becomes a mobile card */
+  #quiz-container {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: #252b36;
+    border-radius: 12px;
+    border: 1px solid #3c3c3c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  /* Scrollable, zoomed-in question text */
+  .question,
+  .original-text {
+    font-size: 18px;
+    line-height: 1.6;
+    max-height: 45vh;
+    overflow-y: auto;
+    padding-right: 6px;
+    margin-bottom: 16px;
+  }
+
+  /* Auto-size inputs on mobile */
+  input {
+    width: auto;
+    min-width: 50px;
+    padding: 6px 8px;
+    font-size: 18px;
+  }
+
+  /* Buttons stack vertically */
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .buttons button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 8px;
     box-sizing: border-box;
   }
 
+  /* Cards on mobile */
   .cards {
-    padding-top: 80px;
+    padding-top: 100px;
   }
 
   .card {
-    max-width: 100%;
-  }
-
-  #quiz-container {
-    margin-top: 80px;
+    max-width: 200px;
+    padding: 16px 20px;
   }
 }
