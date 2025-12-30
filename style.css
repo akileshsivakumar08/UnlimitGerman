@@ -1,8 +1,8 @@
 /* Base dark theme */
 body {
   font-family: "Segoe UI", "Inter", Arial, sans-serif;
-  background-color: #1e2a38; /* deep dark navy */
-  color: #e6e6e6;            /* high-contrast light text */
+  background-color: #1e2a38;
+  color: #e6e6e6;
   line-height: 1.6;
   padding: 20px;
 }
@@ -11,6 +11,7 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 20px;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 h2 {
@@ -21,18 +22,20 @@ h2 {
 
 /* Card layout for home page */
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
+  padding: 20px;
+  max-width: 1100px;       /* center on large screens */
+  margin: 0 auto;
 }
 
 .card {
-  background-color: #252b36; /* slightly lighter panel */
+  background-color: #252b36;
   border: 1px solid #3c3c3c;
   border-radius: 8px;
   padding: 20px;
-  width: 250px;
+  /* remove fixed width so grid can control layout */
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -42,23 +45,22 @@ h2 {
   box-shadow: 0 0 12px rgba(0, 120, 215, 0.6);
 }
 
+/* Quiz container */
 #quiz-container {
   background-color: #252b36;
   border: 1px solid #3c3c3c;
   border-radius: 8px;
   padding: 20px;
-  max-width: 1100px;   /* wider than before */
-  width: 95%;          /* responsive: fills most of the screen */
+  max-width: 1100px;
+  width: 95%;
   margin: 20px auto;
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 
-  /* fade + slide effect */
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 1.5s ease, transform 1.5s ease;
 }
-
 
 #quiz-container.show {
   opacity: 1;
@@ -74,7 +76,6 @@ input {
   border-radius: 4px;
   background-color: #1e2a38;
   color: #e6e6e6;
-
   transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -97,7 +98,7 @@ input.incorrect {
 }
 
 button {
-  background-color: #0078d7; /* Copilot blue accent */
+  background-color: #0078d7;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -120,10 +121,11 @@ button:hover {
   line-height: 1.6;
   font-size: 16px;
 }
-/* Title styling for exercise page */
+
+/* Title styling */
 #title {
-  text-align: center;       /* center horizontally */
-  margin-bottom: 20px;      /* space below before content */
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 #title h2 {
@@ -131,7 +133,7 @@ button:hover {
   color: #e6e6e6;
 }
 
-/* Home button (top-left corner) */
+/* Home button */
 #home-btn {
   position: fixed;
   top: 15px;
@@ -157,6 +159,8 @@ button:hover {
   font-size: 22px;
   line-height: 1;
 }
+
+/* Mode select */
 .mode-select {
   text-align: center;
   margin-bottom: 15px;
@@ -170,8 +174,10 @@ button:hover {
   border-radius: 6px;
   font-size: 15px;
 }
+
+/* Top controls – fixed so they behave consistently */
 #top-controls {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   display: flex;
@@ -192,4 +198,37 @@ button:hover {
 #top-controls button:hover {
   background-color: #0078d7;
   cursor: pointer;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  #home-btn {
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+
+  #top-controls {
+    top: 60px;
+    right: 10px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cards {
+    padding-top: 80px; /* avoid overlap with top controls */
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  #quiz-container {
+    margin-top: 80px; /* also avoid overlap on quiz page */
+  }
 }
