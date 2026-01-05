@@ -21,8 +21,15 @@ fetch("Exercises/index.json")
   .then(res => res.json())
   .then(data => {
     const title = data[0].title;
+    const source = data[0].source;
 
+    // Title
     document.getElementById("title").innerHTML = `<h2><b>${title}</b></h2>`;
+
+    // NEW: Source under title
+    document.getElementById("source").innerHTML = `
+      <a href="${source}" target="_blank" class="source-link">Quelle: ${source}</a>
+    `;
 
     // Default view: original text
     showOriginalText(data[0]);
@@ -211,10 +218,11 @@ function createInput(correct) {
   input.type = "text";
   input.size = correct.length;
   input.dataset.answer = correct;
+
   // 🔥 Mobile keyboard fixes
   input.setAttribute("autocapitalize", "none");
-  input.setAttribute("autocorrect", "off"); 
-  input.setAttribute("autocomplete", "off"); 
+  input.setAttribute("autocorrect", "off");
+  input.setAttribute("autocomplete", "off");
   input.setAttribute("spellcheck", "false");
 
   input.addEventListener("input", () => {

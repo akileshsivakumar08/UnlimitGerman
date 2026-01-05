@@ -292,3 +292,20 @@ html, body {
     padding: 16px 20px;
   }
 }
+#source {
+  text-align: center;
+  margin-top: -10px;   /* pulls it closer to the title */
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #ffffff;      /* white text */
+}
+#source a {
+  color: #ffffff;       /* white link */
+  text-decoration: none;
+  opacity: 0.85;        /* softer look */
+}
+
+#source a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
